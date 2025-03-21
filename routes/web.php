@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Models\Esp32Data;
+use Illuminate\Support\Facades\Response;
 
 Route::get('/welcome', function () {
     return view('welcome');
@@ -48,6 +49,39 @@ Route::get('/esp32-data', function () {
     $data = Esp32Data::latest()->take(10)->get(); // ดึงข้อมูล 10 รายการล่าสุด
     return view('esp32-data', ['data' => $data]);
 })->name('esp32-data');
+
+//------------------------------------- ดาวน์โหลดข้อมูลเป็นไฟล์ CSV -------------------------------------
+
+Route::get('/download-csv', function () {
+    $data = Esp32Data::all(); // ดึงข้อมูลทั้งหมด
+
+    $filename = "esp32_data_" . now()->format('Y-m-d_H-i-s') . ".csv";
+    $handle = fopen('php://temp', 'w');
+
+    // หัวข้อคอลัมน์
+    fputcsv($handle, ['ID', 'Temperature', 'Humidity', 'LightIntensity', 'Weight', 'Created At']);
+
+    // ข้อมูลจากฐานข้อมูล
+    foreach ($data as $row) {
+        fputcsv($handle, [
+            $row->id,
+            $row->temperature,
+            $row->humidity,
+            $row->LightIntensity,
+            $row->weight,
+            $row->created_at,
+        ]);
+    }
+
+    rewind($handle);
+    $csv = stream_get_contents($handle);
+    fclose($handle);
+
+    return Response::make($csv, 200, [
+        'Content-Type' => 'text/csv',
+        'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+    ]);
+})->name('download-csv');
 
 //---------------------------------------------- สำรองโค้ดไว้เฉยๆ--------------------------------------------
 

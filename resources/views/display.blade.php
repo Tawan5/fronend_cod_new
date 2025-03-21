@@ -66,7 +66,7 @@
                     </div>
                     <div class="row mb-2">
                         <div class="col text-start">
-                            <label class="form-label mb-0">เปิดปิดการทำงาน</label>
+                            <label class="form-label">เปิดปิดการทำงาน</label>
                         </div>
                         <div class="col text-end">
                             <div class="form-check form-switch d-inline-block">
@@ -75,16 +75,24 @@
                             </div>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-center align-items-center mb-3">
-                        <button type="button" class="btn btn-outline-primary time-btn mx-2" data-hours="1">1 ชม.</button>
-                        <button type="button" class="btn btn-outline-primary time-btn mx-2" data-hours="6">6 ชม.</button>
-                        <button type="button" class="btn btn-outline-primary time-btn mx-2" data-hours="12">12 ชม.</button>
-                        <button type="button" class="btn btn-outline-primary time-btn active mx-2" data-hours="24">24
-                            ชม.</button>
+                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                        <input type="radio" class="btn-check" name="hour" id="hour1" autocomplete="off" checked>
+                        <label class="btn btn-outline-primary" for="hour1">1 ชม.</label>
+
+                        <input type="radio" class="btn-check" name="hour" id="hour2" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="hour2">6 ชม.</label>
+
+                        <input type="radio" class="btn-check" name="hour" id="hour3" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="hour3">12 ชม.</label>
+
+                        <input type="radio" class="btn-check" name="hour" id="hour4" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="hour4">24 ชม.</label>
                     </div>
-                    <div class="d-grid gap-2">
-                        <a href="{{ route('history') }}" type="button" class="btn btn-primary">ข้อมูลย้อนหลัง</a>
-                        <a href="{{ route('setting') }}" type="button" class="btn btn-primary">การตั้งค่า</a>
+                    <div class="row row-cols-3 row-cols-md-3 g-2 m-0">
+                        <a href="{{ route('download-csv') }}" class="btn btn-primary btn-sm col">บันทึก CSV</a>
+                        <a href="{{ route('history') }}" type="button"
+                            class="btn btn-primary btn-sm col">ข้อมูลย้อนหลัง</a>
+                        <a href="{{ route('setting') }}" type="button" class="btn btn-primary btn-sm col">การตั้งค่า</a>
                     </div>
                 </div>
             </div>
@@ -131,134 +139,10 @@
             </div>
         </div>
     </div>
+
+    <!-- โหลด Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        //นาฬิกา
-        function updateDateTime() {
-            const now = new Date();
 
-            // แสดงวันที่ในรูปแบบ วัน เดือน ปี (ภาษาไทย)
-            const dateOptions = {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                weekday: 'long'
-            };
-            const dateString = now.toLocaleDateString('th-TH', dateOptions);
-
-            // แสดงเวลาปัจจุบัน
-            const timeString = now.toLocaleTimeString('th-TH', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-
-            document.getElementById('current-date').textContent = dateString;
-            document.getElementById('current-time').textContent = timeString;
-        }
-
-        setInterval(updateDateTime, 1000);
-        updateDateTime();
-
-        // กราฟ
-        async function fetchData() {
-            const response = await fetch('/get-esp32-data');
-            const data = await response.json();
-
-            if (!Array.isArray(data) || data.length === 0) {
-                console.log("❌ ไม่มีข้อมูลจากเซ็นเซอร์");
-                return;
-            }
-
-            const labels = data.map(item => new Date(item.created_at).toLocaleTimeString());
-            const temperatures = data.map(item => item.temperature);
-            const humidities = data.map(item => item.humidity);
-            const lightIntensities = data.map(item => item.LightIntensity);
-            const weights = data.map(item => item.weight);
-
-            updateChart(tempChart, [...labels].reverse(), [...temperatures].reverse()); // กลับลำดับ
-            updateChart(humidityChart, labels, humidities); // ไม่กลับลำดับ
-            updateChart(lightChart, [...labels].reverse(), [...lightIntensities].reverse()); // กลับลำดับ
-            updateChart(weightChart, labels, weights); // ไม่กลับลำดับ
-            updateAllStatusChart(labels, temperatures, humidities, lightIntensities, weights);
-
-        }
-
-        function updateChart(chart, labels, data) {
-            chart.data.labels = labels;
-            chart.data.datasets[0].data = data;
-            chart.update();
-        }
-
-        function updateAllStatusChart(labels, temp, hum, light, weight) {
-            labels.reverse(); // กลับลำดับข้อมูล
-            allStatusChart.data.labels = labels;
-            allStatusChart.data.datasets[0].data = temp;
-            allStatusChart.data.datasets[1].data = hum;
-            allStatusChart.data.datasets[2].data = light;
-            allStatusChart.data.datasets[3].data = weight;
-            allStatusChart.update();
-        }
-
-        const createChart = (id, label, color) => {
-            return new Chart(document.getElementById(id).getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label,
-                        data: [],
-                        borderColor: color,
-                        fill: false
-                    }]
-                },
-                options: {
-                    responsive: false,
-                    scales: {
-                        x: {
-                            reverse: true // ตั้งค่าให้แกน X เรียงข้อมูลจากขวาไปซ้าย
-                        }
-                    }
-                }
-            });
-        };
-
-        const tempChart = createChart('tempChart', 'อุณหภูมิ (°C)', 'red');
-        const humidityChart = createChart('humidityChart', 'ความชื้น (%)', 'blue');
-        const lightChart = createChart('lightChart', 'ความเข้มแสง', 'yellow');
-        const weightChart = createChart('weightChart', 'น้ำหนัก (g)', 'cyan');
-
-        const allStatusChart = new Chart(document.getElementById('allStatusChart').getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                        label: 'อุณหภูมิ (°C)',
-                        borderColor: 'red',
-                        data: []
-                    },
-                    {
-                        label: 'ความชื้น (%)',
-                        borderColor: 'blue',
-                        data: []
-                    },
-                    {
-                        label: 'ความเข้มแสง',
-                        borderColor: 'yellow',
-                        data: []
-                    },
-                    {
-                        label: 'น้ำหนัก (g)',
-                        borderColor: 'cyan',
-                        data: []
-                    }
-                ]
-            },
-            options: {
-                responsive: true
-            }
-        });
-
-        setInterval(fetchData, 5000);
-    </script>
+    <!-- โหลดไฟล์ display.js -->
+    <script src="{{ asset('js/display.js') }}"></script>
 @endsection
