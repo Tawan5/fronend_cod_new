@@ -33,29 +33,24 @@ async function fetchData() {
         return;
     }
 
-    const labels = data.map((item) =>
-        new Date(item.created_at).toLocaleTimeString()
+    // เรียงข้อมูลตามเวลา (เก่าสุด -> ใหม่สุด)
+    data.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+    // ตัดวินาทีออกจากเวลา
+    const labels = data.map((item) => 
+        new Date(item.created_at).toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" })
     );
+
     const temperatures = data.map((item) => item.temperature);
     const humidities = data.map((item) => item.humidity);
     const lightIntensities = data.map((item) => item.LightIntensity);
     const weights = data.map((item) => item.weight);
 
-    updateChart(tempChart, [...labels].reverse(), [...temperatures].reverse());
+    updateChart(tempChart, labels, temperatures);
     updateChart(humidityChart, labels, humidities);
-    updateChart(
-        lightChart,
-        [...labels].reverse(),
-        [...lightIntensities].reverse()
-    );
+    updateChart(lightChart, labels, lightIntensities);
     updateChart(weightChart, labels, weights);
-    updateAllStatusChart(
-        labels,
-        temperatures,
-        humidities,
-        lightIntensities,
-        weights
-    );
+    updateAllStatusChart(labels, temperatures, humidities, lightIntensities, weights);
 }
 
 function updateChart(chart, labels, data) {
@@ -64,15 +59,14 @@ function updateChart(chart, labels, data) {
     chart.update();
 }
 
-function updateAllStatusChart(labels, temp, hum, light, weight) {
-    labels.reverse();
+const updateAllStatusChart = (labels, temperatures, humidities, lightIntensities, weights) => {
     allStatusChart.data.labels = labels;
-    allStatusChart.data.datasets[0].data = temp;
-    allStatusChart.data.datasets[1].data = hum;
-    allStatusChart.data.datasets[2].data = light;
-    allStatusChart.data.datasets[3].data = weight;
+    allStatusChart.data.datasets[0].data = temperatures;
+    allStatusChart.data.datasets[1].data = humidities;
+    allStatusChart.data.datasets[2].data = lightIntensities;
+    allStatusChart.data.datasets[3].data = weights;
     allStatusChart.update();
-}
+};
 
 const createChart = (id, label, color) => {
     return new Chart(document.getElementById(id).getContext("2d"), {
@@ -84,15 +78,28 @@ const createChart = (id, label, color) => {
                     label,
                     data: [],
                     borderColor: color,
-                    fill: false,
+                    fill: true,
+                    tension: 0.3, // เพิ่มความโค้งของเส้นกราฟ
+                    pointRadius: 2,
                 },
             ],
         },
         options: {
-            responsive: false,
+            responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 x: {
-                    reverse: true,
+                    title: {
+                        display: true,
+                        text: "เวลา",
+                    },
+                    reverse: false, // กำหนดให้แกน x ไล่จากซ้ายไปขวา
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: label,
+                    },
                 },
             },
         },
@@ -104,39 +111,30 @@ const humidityChart = createChart("humidityChart", "ความชื้น (%)
 const lightChart = createChart("lightChart", "ความเข้มแสง", "yellow");
 const weightChart = createChart("weightChart", "น้ำหนัก (g)", "cyan");
 
-const allStatusChart = new Chart(
-    document.getElementById("allStatusChart").getContext("2d"),
-    {
-        type: "line",
-        data: {
-            labels: [],
-            datasets: [
-                {
-                    label: "อุณหภูมิ (°C)",
-                    borderColor: "red",
-                    data: [],
-                },
-                {
-                    label: "ความชื้น (%)",
-                    borderColor: "blue",
-                    data: [],
-                },
-                {
-                    label: "ความเข้มแสง",
-                    borderColor: "yellow",
-                    data: [],
-                },
-                {
-                    label: "น้ำหนัก (g)",
-                    borderColor: "cyan",
-                    data: [],
-                },
-            ],
+const allStatusChart = new Chart(document.getElementById("allStatusChart").getContext("2d"), {
+    type: "line",
+    data: {
+        labels: [],
+        datasets: [
+            { label: "อุณหภูมิ (°C)", data: [], borderColor: "red", fill: false },
+            { label: "ความชื้น (%)", data: [], borderColor: "blue", fill: false },
+            { label: "ความเข้มแสง (lux)", data: [], borderColor: "yellow", fill: false },
+            { label: "น้ำหนัก (g)", data: [], borderColor: "green", fill: false },
+        ],
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                title: { display: true, text: "เวลา" },
+                ticks: { autoSkip: true, maxTicksLimit: 10 }, // ปรับให้ไม่แสดงทุกค่าป้องกันความหนาแน่นเกินไป
+            },
+            y: {
+                title: { display: true, text: "ค่าเซ็นเซอร์" },
+            },
         },
-        options: {
-            responsive: true,
-        },
-    }
-);
+    },
+});
 
 setInterval(fetchData, 5000);

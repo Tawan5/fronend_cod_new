@@ -17,7 +17,7 @@
         <div>
             <div class="card h-100 shadow-sm">
                 <div class="card-body">
-                    <div class="row p-2">
+                    <div class="row">
                         <div class="col-12">
                             สถานะโดยรวม
                         </div>
@@ -34,7 +34,7 @@
             <div class="col">
                 <div class="card h-100 shadow-sm">
                     <div class="card-body">
-                        น้ำหนักของผลิตภัณฑ์ 2.38g
+                        น้ำหนัก
                         <i class="bi bi-train-lightrail-front-fill"></i>
                         <div class="w-100">
                             <div class="position-relative" style="aspect-ratio: 16/6;">
@@ -44,7 +44,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col">
+            <div class="col">{{-- ควบการทำงาน --}}
                 <div class="card h-100 shadow-sm p-2">
                     <div class="card-body bg-primary border rounded mb-3">
                         <div class="text-strat">
@@ -75,24 +75,24 @@
                             </div>
                         </div>
                     </div>
+                    {{-- ระยะเวลาแสดงผล --}}
                     <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                        <input type="radio" class="btn-check" name="hour" id="hour1" autocomplete="off" checked>
+                        <input type="radio" class="btn-check" name="hour" id="hour30" autocomplete="off" checked>
+                        <label class="btn btn-outline-primary" for="hour30">30 นาที</label>
+
+                        <input type="radio" class="btn-check" name="hour" id="hour1" autocomplete="off">
                         <label class="btn btn-outline-primary" for="hour1">1 ชม.</label>
 
                         <input type="radio" class="btn-check" name="hour" id="hour2" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="hour2">6 ชม.</label>
+                        <label class="btn btn-outline-primary" for="hour2">2 ชม.</label>
 
-                        <input type="radio" class="btn-check" name="hour" id="hour3" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="hour3">12 ชม.</label>
-
-                        <input type="radio" class="btn-check" name="hour" id="hour4" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="hour4">24 ชม.</label>
+                        <input type="radio" class="btn-check" name="hour" id="hour6" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="hour6">6 ชม.</label>
                     </div>
-                    <div class="row row-cols-3 row-cols-md-3 g-2 m-0">
-                        <a href="{{ route('download-csv') }}" class="btn btn-primary btn-sm col">บันทึก CSV</a>
-                        <a href="{{ route('history') }}" type="button"
-                            class="btn btn-primary btn-sm col">ข้อมูลย้อนหลัง</a>
-                        <a href="{{ route('setting') }}" type="button" class="btn btn-primary btn-sm col">การตั้งค่า</a>
+                    <div class="btn-group mt-2" role="group" aria-label="Basic radio toggle button group">
+                        <a href="{{ route('download-csv') }}" class="btn btn-primary">บันทึก CSV</a>
+                        <a href="{{ route('history') }}" type="button" class="btn btn-primary">ข้อมูลย้อนหลัง</a>
+                        <a href="{{ route('setting') }}" type="button" class="btn btn-primary">การตั้งค่า</a>
                     </div>
                 </div>
             </div>
@@ -101,7 +101,7 @@
             <div class="col">
                 <div class="card h-100 shadow-sm">
                     <div class="card-body">
-                        <p>อุณหภูมิภายในตู้ 68 องศาเซลเซียส</p>
+                        <p>อุณหภูมิ</p>
                         <i class="bi bi-thermometer-sun"></i>
                         <div class="w-100">
                             <div class="position-relative" style="aspect-ratio: 16/6;">
@@ -114,7 +114,7 @@
             <div class="col">
                 <div class="card h-100 shadow-sm">
                     <div class="card-body">
-                        <p>ความชื้นสัมพัทธ์ 50%</p>
+                        <p>ความชื้นสัมพัทธ์</p>
                         <i class="bi bi-droplet-half"></i>
                         <div class="w-100">
                             <div class="position-relative" style="aspect-ratio: 16/6;">
@@ -127,7 +127,7 @@
             <div class="col">
                 <div class="card h-100 shadow-sm">
                     <div class="card-body">
-                        <p>ความเข้มแสง 369</p>
+                        <p>ความเข้มแสง</p>
                         <i class="bi bi-brightness-high-fill"></i>
                         <div class="w-100">
                             <div class="position-relative" style="aspect-ratio: 16/6;">
