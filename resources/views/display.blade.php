@@ -76,19 +76,15 @@
                         </div>
                     </div>
                     {{-- ระยะเวลาแสดงผล --}}
-                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                        <input type="radio" class="btn-check" name="hour" id="hour30" autocomplete="off" checked>
-                        <label class="btn btn-outline-primary" for="hour30">30 นาที</label>
-
-                        <input type="radio" class="btn-check" name="hour" id="hour1" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="hour1">1 ชม.</label>
-
-                        <input type="radio" class="btn-check" name="hour" id="hour2" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="hour2">2 ชม.</label>
-
-                        <input type="radio" class="btn-check" name="hour" id="hour6" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="hour6">6 ชม.</label>
-                    </div>
+                    <div class="mb-3">
+                        <label for="timeRange" class="form-label" onchange="">เลือกช่วงเวลา:</label>
+                        <select id="timeRange" class="form-select">
+                            <option value="30">30 นาที</option>
+                            <option value="60">1 ชั่วโมง</option>
+                            <option value="120">2 ชั่วโมง</option>
+                            <option value="360">6 ชั่วโมง</option>
+                        </select>
+                    </div>                    
                     <div class="btn-group mt-2" role="group" aria-label="Basic radio toggle button group">
                         <a href="{{ route('download-csv') }}" class="btn btn-primary">บันทึก CSV</a>
                         <a href="{{ route('history') }}" type="button" class="btn btn-primary">ข้อมูลย้อนหลัง</a>
