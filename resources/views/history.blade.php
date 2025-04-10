@@ -16,23 +16,16 @@
             </li>
         </ul>
 
-        <ul class="nav justify-content-center align-items-center fs-3">
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="bi bi-chevron-left text-primary"></i>
-                </a>
-            </li>
-            <li class="nav-item mx-3">
-                <span class="text-dark">29/07/2024</span>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="bi bi-chevron-right text-primary"></i>
-                </a>
-            </li>
-        </ul>
+        <form action="">
+            <select class="form-select mb-3 shadow-sm" aria-label="Default select example">
+                <option selected>วันนี้</option>
+                <option value="1">เมื่อวาน</option>
+                <option value="2">สองวันที่แล้ว</option>
+                <option value="3">สามวันที่แล้ว</option>
+            </select>
+        </form>
 
-        <div class="card mb-3">
+        <div class="card mb-3 shadow-sm">
             <div class="card-header">
                 <div class="row p-2">
                     <div class="col-12">
@@ -49,7 +42,7 @@
                 </div>
             </div>
         </div>
-        <div class="card mb-3">
+        <div class="card mb-3 shadow-sm">
             <div class="card-header">
                 <div class="row p-2">
                     <div class="col-12">
@@ -66,7 +59,7 @@
                 </div>
             </div>
         </div>
-        <div class="card mb-3">
+        <div class="card mb-3 shadow-sm">
             <div class="card-header">
                 <div class="row p-2">
                     <div class="col-12">
@@ -83,7 +76,7 @@
                 </div>
             </div>
         </div>
-        <div class="card mb-3">
+        <div class="card mb-3 shadow-sm">
             <div class="card-header">
                 <div class="row p-2">
                     <div class="col-12">
@@ -101,157 +94,16 @@
             </div>
         </div>
     </div>
-
     <script>
-        // Data สำหรับกราฟ
-        const data = {
-            labels: ['10:00', '10:10', '10:20', '10:30', '10:40', '10:50'], // แสดงเวลาเป็นทุก 10 นาที
-            datasets: [{
-                label: 'น้ำหนัก (g)',
-                data: [2.35, 2.36, 2.38, 2.37, 2.39, 2.38], // น้ำหนักในกรัม
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                tension: 0.3,
-                fill: true
-            }]
+        // ส่งข้อมูลจาก Blade ไปยัง JavaScript
+        window.historyData = {
+            labels: @json($labels),
+            temperature: @json($temperature),
+            humidity: @json($humidity),
+            weight: @json($weight),
+            light: @json($light)
         };
-
-        // Config สำหรับกราฟ
-        const config = {
-            type: 'line',
-            data: data,
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    }
-                },
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'เวลา (นาที)'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'น้ำหนัก (g)'
-                        },
-                        beginAtZero: false
-                    }
-                }
-            }
-        };
-
-        // กราฟอุณหภูมิ
-        new Chart(document.getElementById('tempChart').getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: ['10:00', '10:10', '10:20', '10:30', '10:40', '10:50'],
-                datasets: [{
-                    label: 'อุณหภูมิ (°C)',
-                    data: [66, 67, 68, 69, 70, 68],
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    tension: 0.3,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: false,
-                        title: {
-                            display: true,
-                            text: 'อุณหภูมิ (°C)'
-                        }
-                    }
-                }
-            }
-        });
-
-        // กราฟความชื้นสัมพัทธ์
-        new Chart(document.getElementById('humidityChart').getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: ['10:00', '10:10', '10:20', '10:30', '10:40', '10:50'],
-                datasets: [{
-                    label: 'ความชื้นสัมพัทธ์ (%)',
-                    data: [45, 46, 48, 50, 49, 50],
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    tension: 0.3,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'ความชื้นสัมพัทธ์ (%)'
-                        }
-                    }
-                }
-            }
-        });
-
-        // กราฟความเข้มแสง
-        new Chart(document.getElementById('lightChart').getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: ['10:00', '10:10', '10:20', '10:30', '10:40', '10:50'],
-                datasets: [{
-                    label: 'ความเข้มแสง',
-                    data: [350, 360, 365, 370, 375, 369],
-                    borderColor: 'rgba(255, 206, 86, 1)',
-                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                    tension: 0.3,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'ความเข้มแสง'
-                        }
-                    }
-                }
-            }
-        });
-        // Render กราฟ
-        const ctx = document.getElementById('weightChart').getContext('2d');
-        new Chart(ctx, config);
     </script>
+    <!-- โหลดไฟล์ display.js -->
+    <script src="{{ asset('js/history.js') }}"></script>
 @endsection

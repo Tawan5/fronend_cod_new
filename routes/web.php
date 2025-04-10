@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Esp32Data;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
+use App\Http\Controllers\HistoryController;
 
 Route::get('/welcome', function () {
     return view('welcome');
@@ -56,6 +57,8 @@ Route::get('/esp32-data', function () {
     $data = Esp32Data::latest()->take(100)->get(); // ดึงข้อมูล 10 รายการล่าสุด
     return view('esp32-data', ['data' => $data]);
 })->name('esp32-data');
+
+Route::get('/history', [HistoryController::class, 'index'])->name('history');
 
 //------------------------------------- ดาวน์โหลดข้อมูลเป็นไฟล์ CSV -------------------------------------
 
